@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Support\Facades\Auth;
+use PhpParser\Node\Expr\AssignOp\Pow;
 
 class PostController extends Controller implements HasMiddleware
 {
@@ -31,15 +34,44 @@ class PostController extends Controller implements HasMiddleware
 
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/posts",
+     *     summary="Get all posts by authenticated user",
+     *     tags={"Posts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paginated list of posts",
+     *         @OA\JsonContent(ref="#/components/schemas/PostCollection")
+     *     )
+     * )
      */
     public function index()
     {
-        return Post::mine(Auth::user())->paginate(20);
+        return new PostCollection(Post::mine(Auth::user())->paginate(20));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/posts",
+     *     summary="Create a new post",
+     *     tags={"Posts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "description"},
+     *             @OA\Property(property="title", type="string", example="My First Post"),
+     *             @OA\Property(property="description", type="string", example="This is the content of the post.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Post created successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResource")
+     *     ),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function store(Request $request)
     {
@@ -49,25 +81,71 @@ class PostController extends Controller implements HasMiddleware
             'description' => 'required|string',
         ]);
 
-        Post::insert([
+        $post = Post::create([
             'title' => $request->title,
             'description' => $request->description,
             'image' => null,
             'user_id' => Auth::user()->id, // Assuming user with ID 1 exists
         ]);
+
+        return new PostResource($post);
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/posts/{id}",
+     *     summary="Get a single post by ID",
+     *     tags={"Posts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Post ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Post retrieved",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResource")
+     *     ),
+     *     @OA\Response(response=404, description="Post not found")
+     * )
      */
     public function show(Post $post)
     {
 
-        return $post;
+        return new PostResource($post);
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/posts/{id}",
+     *     summary="Update a post",
+     *     tags={"Posts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Post ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "description"},
+     *             @OA\Property(property="title", type="string", example="Updated Post Title"),
+     *             @OA\Property(property="description", type="string", example="Updated post content.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Post updated successfully",
+     *         @OA\JsonContent(ref="#/components/schemas/PostResource")
+     *     ),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function update(Request $request, Post $post)
     {
@@ -82,11 +160,27 @@ class PostController extends Controller implements HasMiddleware
             'description' => $request->description,
             'image' => null, // Assuming no image upload for now
         ]);
+
+        return new PostResource($post);
     }
 
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/posts/{id}",
+     *     summary="Delete a post",
+     *     tags={"Posts"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Post ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=204, description="Post deleted"),
+     *     @OA\Response(response=404, description="Post not found")
+     * )
      */
     public function destroy(Post $post)
     {

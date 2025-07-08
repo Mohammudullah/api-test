@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use Dom\Comment;
@@ -40,49 +42,133 @@ class CommentController extends Controller implements HasMiddleware
 
 
     /**
-     * Display a listing of the resource.
+     * @OA\Get(
+     *     path="/api/posts/{post}/comments",
+     *     summary="Get paginated comments for a post",
+     *     tags={"Comments"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="Post ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paginated list of comments",
+     *         @OA\JsonContent(ref="#/components/schemas/CommentCollection")
+     *     )
+     * )
      */
     public function index(Post $post)
     {
-        return $post->comments()->paginate(20);
+        return new CommentCollection($post->comments()->paginate(20));
     }
 
 
     /**
-     * Store a newly created resource in storage.
+     * @OA\Post(
+     *     path="/api/posts/{post}/comments",
+     *     summary="Create a new comment",
+     *     tags={"Comments"},
+     *     security={{"sanctum":{}}},
+     * @OA\Parameter(
+     *        name="post",
+     *       in="path",
+     *       required=true,
+     *      description="Post ID",
+     *      @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="name", type="string", example="Jane Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="jane@example.com"),
+     *             @OA\Property(property="description", type="string", example="Nice post!")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment created",
+     *         @OA\JsonContent(ref="#/components/schemas/CommentResource")
+     *     ),
+     *     @OA\Response(response=404, description="Post not found or unauthorized"),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
-    public function store(Request $request)
+    public function store(Request $request, Post $post)
     {
 
-        if(Post::find($request->post_id)?->user_id !== Auth::user()->id) {
-            abort(404);
-        }
-
         $request->validate([
-            'post_id' => 'required|integer|exists:posts,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'description' => 'required|string',
         ]);
 
         $comment = ModelsComment::create([
-            'post_id' => $request->post_id,
+            'post_id' => $post->id,
             'name' => $request->name,
             'email' => $request->email,
             'description' => $request->description,
         ]);
+
+        return new CommentResource($comment);
     }
 
     /**
-     * Display the specified resource.
+     * @OA\Get(
+     *     path="/api/comments/{id}",
+     *     summary="Get a single comment by ID",
+     *     tags={"Comments"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Comment ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment found",
+     *         @OA\JsonContent(ref="#/components/schemas/CommentResource")
+     *     ),
+     *     @OA\Response(response=404, description="Comment not found")
+     * )
      */
     public function show(ModelsComment $comment)
     {
-        return $comment;
+        return new CommentResource($comment);
     }
 
     /**
-     * Update the specified resource in storage.
+     * @OA\Put(
+     *     path="/api/comments/{id}",
+     *     summary="Update a comment",
+     *     tags={"Comments"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Comment ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"description"},
+     *             @OA\Property(property="description", type="string", example="Updated comment content")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Comment updated",
+     *         @OA\JsonContent(ref="#/components/schemas/CommentResource")
+     *     ),
+     *     @OA\Response(response=422, description="Validation error")
+     * )
      */
     public function update(Request $request, ModelsComment $comment)
     {
@@ -94,14 +180,33 @@ class CommentController extends Controller implements HasMiddleware
             'description' => $request->description,
         ]);
 
-        return $comment;
+        return new CommentResource($comment);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @OA\Delete(
+     *     path="/api/comments/{id}",
+     *     summary="Delete a comment",
+     *     tags={"Comments"},
+     *     security={{"sanctum":{}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         required=true,
+     *         description="Comment ID",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=204, description="Comment deleted successfully"),
+     *     @OA\Response(response=404, description="Comment not found")
+     * )
      */
     public function destroy(ModelsComment $comment)
     {
         $comment->delete();
+
+        return response()->json(
+            ['message' => 'Comment deleted successfully'],
+            204
+        );
     }
 }
