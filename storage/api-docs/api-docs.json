@@ -221,13 +221,13 @@
                 ]
             }
         },
-        "/api/register": {
+        "/api/signup": {
             "post": {
                 "tags": [
                     "Auth"
                 ],
                 "summary": "Register a new user",
-                "operationId": "0ff6649e3b7b2497ae93e2fee991e02c",
+                "operationId": "1a5ff241ed68a60c9b74e991e1a55c52",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -513,7 +513,7 @@
                 ],
                 "responses": {
                     "204": {
-                        "description": "Comment deleted"
+                        "description": "Comment deleted successfully"
                     },
                     "404": {
                         "description": "Comment not found"

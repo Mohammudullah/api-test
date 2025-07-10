@@ -14,7 +14,7 @@ class SingUpController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/register",
+     *     path="/api/signup",
      *     summary="Register a new user",
      *     tags={"Auth"},
      *     @OA\RequestBody(
