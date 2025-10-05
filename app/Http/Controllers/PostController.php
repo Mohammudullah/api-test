@@ -62,7 +62,8 @@ class PostController extends Controller implements HasMiddleware
      *         @OA\JsonContent(
      *             required={"title", "description"},
      *             @OA\Property(property="title", type="string", example="My First Post"),
-     *             @OA\Property(property="description", type="string", example="This is the content of the post.")
+     *             @OA\Property(property="description", type="string", example="This is the content of the post."),
+     *            @OA\Property(property="image", type="string", format="binary", description="Image file")
      *         )
      *     ),
      *     @OA\Response(
@@ -79,12 +80,13 @@ class PostController extends Controller implements HasMiddleware
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
+            'image' => 'nullable|image|max:2048',
         ]);
 
         $post = Post::create([
             'title' => $request->title,
             'description' => $request->description,
-            'image' => null,
+            'image' => $request->file('image') ? $request->file('image')->store('images', 'public') : null,
             'user_id' => Auth::user()->id, // Assuming user with ID 1 exists
         ]);
 

@@ -77,7 +77,7 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'profile_picture' => 'sometimes|image|max:2048', // Assuming you want to allow profile picture updates
+            'profile_picture' => 'nullable|image|max:2048', // Assuming you want to allow profile picture updates
         ]);
 
         $user->update([

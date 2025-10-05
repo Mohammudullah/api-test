@@ -15,8 +15,9 @@ Route::group(['middleware' => [ApiJsonResponse::class]], function () {
     //login routes
     Route::post('/login', [LoginController::class, 'store'])
         ->name('login.store');
+        
     Route::post('/logout', [LoginController::class, 'destroy'])
-        ->name('logout.destroy');
+        ->name('logout.destroy')->middleware('auth:sanctum');
 
     //signup route
     Route::post('/signup', [SingUpController::class, 'store'])

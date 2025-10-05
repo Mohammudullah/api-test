@@ -46,4 +46,9 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? asset('storage/' . $this->image) : null;
+    }
 }

@@ -574,6 +574,11 @@
                                     "description": {
                                         "type": "string",
                                         "example": "This is the content of the post."
+                                    },
+                                    "image": {
+                                        "description": "Image file",
+                                        "type": "string",
+                                        "format": "binary"
                                     }
                                 },
                                 "type": "object"
