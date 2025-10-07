@@ -30,7 +30,7 @@ class ProfileController extends Controller
     }
 
     /**
-     * @OA\Post(
+     * @OA\Put(
      *     path="/api/profile",
      *     summary="Update authenticated user's profile",
      *     tags={"Profile"},
