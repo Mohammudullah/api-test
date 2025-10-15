@@ -1,21 +1,22 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PostResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * @OA\Schema(
-     *     schema="PostResource",
+     *     schema="CommentResource",
      *     type="object",
-     *     required={"id", "title", "description", "created_at", "updated_at"},
+     *     required={"id", "name", "email", "description"},
      *     @OA\Property(property="id", type="integer", example=1),
-     *     @OA\Property(property="title", type="string", example="My First Post"),
-     *     @OA\Property(property="description", type="string", example="This is my post description"),
-     *     @OA\Property(property="image", type="string", nullable=true, example=null),
+     *     @OA\Property(property="post_id", type="integer", example=2),
+     *     @OA\Property(property="name", type="string", example="Jane Doe"),
+     *     @OA\Property(property="email", type="string", format="email", example="jane@example.com"),
+     *     @OA\Property(property="description", type="string", example="This is a comment"),
      *     @OA\Property(property="created_at", type="string", format="date-time"),
      *     @OA\Property(property="updated_at", type="string", format="date-time")
      * )
@@ -24,9 +25,9 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
+            'name' => $this->name,
+            'email' => $this->email,
             'description' => $this->description,
-            'image' => $this->image_url, // Assuming you have an image_url accessor
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

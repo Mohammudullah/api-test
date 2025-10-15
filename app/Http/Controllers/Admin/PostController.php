@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\PostCollection;
-use App\Http\Resources\PostResource;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\PostCollection;
+use App\Http\Resources\Admin\PostResource;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;

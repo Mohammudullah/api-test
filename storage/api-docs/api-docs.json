@@ -9,6 +9,452 @@
         "version": "1.0.0"
     },
     "paths": {
+        "/api/posts/{post}/comments": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get paginated comments for a post",
+                "operationId": "508f3d489b694ca6b091d49d4d602b1b",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of comments",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Create a new comment",
+                "operationId": "cbb9921340708573608e49fe0ef31cff",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Jane Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "jane@example.com"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Nice post!"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found or unauthorized"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/comments/{id}": {
+            "get": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Get a single comment by ID",
+                "operationId": "8ace29be80669654c42816dc6f7c057d",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Comment found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Update a comment",
+                "operationId": "7d57681f17db94b1e1ecc20e00adedaf",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "description"
+                                ],
+                                "properties": {
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated comment content"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Comment updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CommentResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Comments"
+                ],
+                "summary": "Delete a comment",
+                "operationId": "45365ad3259ffa7564387a6f48aaed40",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Comment ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Comment deleted successfully"
+                    },
+                    "404": {
+                        "description": "Comment not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/posts": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Get all posts by authenticated user",
+                "operationId": "676074d0362cc8cbf9f6e118bc6269c4",
+                "responses": {
+                    "200": {
+                        "description": "Paginated list of posts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostCollection"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Create a new post",
+                "operationId": "4c34404764240990dadfd5f2513d5f83",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "My First Post"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "This is the content of the post."
+                                    },
+                                    "image": {
+                                        "description": "Image file",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Post created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/posts/{id}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Get a single post by ID",
+                "operationId": "823a93a1ce555470304d9567056c17ec",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Post retrieved",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Update a post",
+                "operationId": "c726c1c7bb74b05be2b9e57f73fbcb7a",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "description"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Updated Post Title"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated post content."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Post updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PostResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Delete a post",
+                "operationId": "8cadbee26b3ce10a41ca0419108abfc7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Post ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Post deleted"
+                    },
+                    "404": {
+                        "description": "Post not found"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/login": {
             "post": {
                 "tags": [
@@ -161,12 +607,12 @@
                     }
                 ]
             },
-            "post": {
+            "put": {
                 "tags": [
                     "Profile"
                 ],
                 "summary": "Update authenticated user's profile",
-                "operationId": "6f55043017ca860da4c028b59219cc36",
+                "operationId": "c3ac9207600886dabfd7ad082914c235",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -295,13 +741,45 @@
                 }
             }
         },
-        "/api/posts/{post}/comments": {
+        "/api/frontend/home/posts": {
             "get": {
                 "tags": [
-                    "Comments"
+                    "Homepage"
                 ],
-                "summary": "Get paginated comments for a post",
-                "operationId": "fa11c964243f6de4a2deb4f17cbbe12b",
+                "summary": "Get Featured and recent posts for homepage",
+                "operationId": "c02698ffb59bce026a41ed0489172570",
+                "responses": {
+                    "200": {
+                        "description": "Featured post and list of recent posts",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "featured": {
+                                            "$ref": "#/components/schemas/FrontendPostResource"
+                                        },
+                                        "posts": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/FrontendPostResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/frontend/posts/{post}": {
+            "get": {
+                "tags": [
+                    "Frontend Post"
+                ],
+                "summary": "Get details of a specific post",
+                "operationId": "bda3aba946a88b6f657fb50e938fab96",
                 "parameters": [
                     {
                         "name": "post",
@@ -315,455 +793,21 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Paginated list of comments",
+                        "description": "Details of the specified post",
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/CommentCollection"
+                                    "$ref": "#/components/schemas/FrontendPostDetailsResource"
                                 }
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Create a new comment",
-                "operationId": "9792489adcc2c37ecca8e81d0599ee4e",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "Post ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Jane Doe"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "jane@example.com"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Nice post!"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Comment created",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CommentResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found or unauthorized"
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/comments/{id}": {
-            "get": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Get a single comment by ID",
-                "operationId": "ca005bcffa22ab29b155dd7aa13b5d6e",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Comment ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Comment found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CommentResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Comment not found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Update a comment",
-                "operationId": "39e62963cbf897a1b2168683878e0a46",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Comment ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "description"
-                                ],
-                                "properties": {
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated comment content"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Comment updated",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/CommentResource"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Comments"
-                ],
-                "summary": "Delete a comment",
-                "operationId": "721e5dc0c32ef81276203df965767606",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Comment ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Comment deleted successfully"
-                    },
-                    "404": {
-                        "description": "Comment not found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/posts": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Get all posts by authenticated user",
-                "operationId": "e9eaf7df702a94f4443677bd1a36cfe6",
-                "responses": {
-                    "200": {
-                        "description": "Paginated list of posts",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PostCollection"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "post": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Create a new post",
-                "operationId": "4a657e51a0066c64781851f2fd2651e2",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "title",
-                                    "description"
-                                ],
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "My First Post"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "This is the content of the post."
-                                    },
-                                    "image": {
-                                        "description": "Image file",
-                                        "type": "string",
-                                        "format": "binary"
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Post created successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PostResource"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            }
-        },
-        "/api/posts/{id}": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Get a single post by ID",
-                "operationId": "b0f9d92879218f68a376b6edc6467c67",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Post ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Post retrieved",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PostResource"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "put": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Update a post",
-                "operationId": "929614537d76a081a92170a41ed3bdb3",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Post ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "title",
-                                    "description"
-                                ],
-                                "properties": {
-                                    "title": {
-                                        "type": "string",
-                                        "example": "Updated Post Title"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated post content."
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Post updated successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/PostResource"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Delete a post",
-                "operationId": "fad1726bd24cd459fc1525b67985df39",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "description": "Post ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "204": {
-                        "description": "Post deleted"
-                    },
-                    "404": {
-                        "description": "Post not found"
-                    }
-                },
-                "security": [
-                    {
-                        "sanctum": []
-                    }
-                ]
+                }
             }
         }
     },
     "components": {
         "schemas": {
-            "UserResource": {
-                "required": [
-                    "name",
-                    "email",
-                    "profile_picture"
-                ],
-                "properties": {
-                    "name": {
-                        "description": "Class UserResource",
-                        "type": "string"
-                    },
-                    "email": {
-                        "type": "string"
-                    },
-                    "profile_picture": {
-                        "type": "string"
-                    }
-                },
-                "type": "object"
-            },
             "CommentCollection": {
                 "properties": {
                     "data": {
@@ -1024,6 +1068,152 @@
                     }
                 },
                 "type": "object"
+            },
+            "UserResource": {
+                "required": [
+                    "name",
+                    "email",
+                    "profile_picture"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Class UserResource",
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "profile_picture": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "FrontendCommentResource": {
+                "required": [
+                    "id",
+                    "post_id",
+                    "description",
+                    "created_at",
+                    "author"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "post_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is a comment"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FrontendPostDetailsResource": {
+                "required": [
+                    "id",
+                    "title",
+                    "description",
+                    "created_at",
+                    "author",
+                    "image_url"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "My First Post"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "This is my post description"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "comments": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/CommentResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "FrontendPostResource": {
+                "required": [
+                    "id",
+                    "title",
+                    "subtitle",
+                    "created_at",
+                    "author",
+                    "image_url"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "title": {
+                        "type": "string",
+                        "example": "My First Post"
+                    },
+                    "subtitle": {
+                        "type": "string",
+                        "example": "This is my post subtitle..."
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "author": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "image_url": {
+                        "type": "string",
+                        "example": "https://example.com/image.jpg"
+                    },
+                    "comment_count": {
+                        "type": "integer",
+                        "example": 5
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -1037,6 +1227,14 @@
     },
     "tags": [
         {
+            "name": "Comments",
+            "description": "Comments"
+        },
+        {
+            "name": "Posts",
+            "description": "Posts"
+        },
+        {
             "name": "Auth",
             "description": "Auth"
         },
@@ -1045,12 +1243,12 @@
             "description": "Profile"
         },
         {
-            "name": "Comments",
-            "description": "Comments"
+            "name": "Homepage",
+            "description": "Homepage"
         },
         {
-            "name": "Posts",
-            "description": "Posts"
+            "name": "Frontend Post",
+            "description": "Frontend Post"
         }
     ]
 }

@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\Admin;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class PostCollection extends ResourceCollection
+class CommentCollection extends ResourceCollection
 {
     /**
      * @OA\Schema(
-    *   schema="PostCollection",
+    *   schema="CommentCollection",
     *   type="object",
     *   @OA\Property(
     *     property="data",
     *     type="array",
-    *     @OA\Items(ref="#/components/schemas/PostResource")
+    *     @OA\Items(ref="#/components/schemas/CommentResource")
     *   ),
     *   @OA\Property(
     *     property="links",
@@ -48,9 +48,8 @@ class PostCollection extends ResourceCollection
     * )
      *
      */
-
     public function toArray(Request $request)
     {
-        return PostResource::collection($this->collection);
+        return CommentResource::collection($this->collection);
     }
 }

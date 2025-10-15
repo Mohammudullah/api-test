@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
@@ -50,5 +51,10 @@ class Post extends Model
     public function getImageUrlAttribute()
     {
         return $this->image ? asset('storage/' . $this->image) : null;
+    }
+
+    public function getSubtitleAttribute()
+    {
+        return Str::limit($this->description, 100, preserveWords: true);
     }
 }

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
-use App\Http\Resources\CommentCollection;
-use App\Http\Resources\CommentResource;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\CommentCollection;
+use App\Http\Resources\Admin\CommentResource;
 use App\Models\Comment as ModelsComment;
 use App\Models\Post;
 use Dom\Comment;
